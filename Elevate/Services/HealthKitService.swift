@@ -2,7 +2,11 @@ import HealthKit
 import Foundation
 
 final class HealthKitService {
-    private let store = HKHealthStore()
+    private let store: HKHealthStore
+
+    init(store: HKHealthStore = HKHealthStore()) {
+        self.store = store
+    }
 
     private let writeTypes: Set<HKSampleType> = [
         HKQuantityType(.stepCount),
@@ -19,6 +23,7 @@ final class HealthKitService {
 
     /// Returns user's body mass in kg, or nil if unavailable.
     func bodyMassKg() async -> Double? {
+        guard HKHealthStore.isHealthDataAvailable() else { return nil }
         let type = HKQuantityType(.bodyMass)
         let descriptor = HKSampleQueryDescriptor(
             predicates: [.quantitySample(type: type)],
