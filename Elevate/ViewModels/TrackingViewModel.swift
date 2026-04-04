@@ -38,6 +38,9 @@ final class TrackingViewModel: ObservableObject {
     }
 
     func start() async {
+        guard !isRunning else { return }
+        pipelineCancellables.removeAll()
+        timer?.cancel()
         weightKg = await healthKit.bodyMassKg() ?? 70.0
         isRunning = true
         startDate = Date()
@@ -103,36 +106,21 @@ final class TrackingViewModel: ObservableObject {
 
         summary = SessionSummary(
             steps: finalSteps, floors: finalFloors,
-            calories: CalorieEstimator.calories(steps: finalSteps, weightKg: weightKg),
-            duration: end.timeIntervalSince(start),
+            calories: session.calories,
+            duration: session.duration,
             newlyUnlocked: newAchievements
         )
     }
 
     var dailyGoalProgress: Double {
         let goal = UserDefaults.standard.dailyStepGoal
+        guard goal > 0 else { return 0 }
         return min(1.0, Double(steps) / Double(goal))
     }
 
     // MARK: - Private
 
     private func currentStreak(from sessions: [ClimbSession]) -> Int {
-        let calendar = Calendar.current
-        let goal = UserDefaults.standard.dailyStepGoal
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-        while true {
-            let end = calendar.date(byAdding: .day, value: 1, to: checkDate) ?? checkDate
-            let daySteps = sessions.filter {
-                $0.startDate >= checkDate && $0.startDate < end
-            }.reduce(0) { $0 + $1.steps }
-            if daySteps >= goal {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
-            } else {
-                break
-            }
-        }
-        return streak
+        calculateStreak(from: sessions, goal: UserDefaults.standard.dailyStepGoal)
     }
 }

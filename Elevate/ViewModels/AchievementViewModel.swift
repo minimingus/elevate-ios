@@ -52,18 +52,6 @@ final class AchievementViewModel: ObservableObject {
     }
 
     private func computeStreak(from sessions: [ClimbSession]) -> Int {
-        let calendar = Calendar.current
-        let goal = UserDefaults.standard.dailyStepGoal
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-        while true {
-            let end = calendar.date(byAdding: .day, value: 1, to: checkDate) ?? checkDate
-            let daySteps = sessions.filter {
-                $0.startDate >= checkDate && $0.startDate < end
-            }.reduce(0) { $0 + $1.steps }
-            if daySteps >= goal { streak += 1; checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate }
-            else { break }
-        }
-        return streak
+        calculateStreak(from: sessions, goal: UserDefaults.standard.dailyStepGoal)
     }
 }
