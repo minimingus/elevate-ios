@@ -3,7 +3,7 @@ import Foundation
 
 @Model
 final class Achievement {
-    var id: String
+    @Attribute(.unique) var id: String
     var name: String
     var achievementDescription: String
     var unlockedDate: Date?
