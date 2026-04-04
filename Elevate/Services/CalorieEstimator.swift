@@ -1,5 +1,3 @@
-import Foundation
-
 enum CalorieEstimator {
     /// Estimates calories burned climbing stairs.
     /// Formula: steps × weightKg × 0.0017 (MET-based approximation for stair climbing)
