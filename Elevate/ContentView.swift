@@ -5,6 +5,7 @@ struct ContentView: View {
     @EnvironmentObject private var historyVM: HistoryViewModel
     @EnvironmentObject private var achievementVM: AchievementViewModel
 
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showHistory = false
     @State private var showAchievements = false
 
@@ -42,6 +43,9 @@ struct ContentView: View {
         .task {
             let hk = HealthKitService()
             try? await hk.requestPermission()
+        }
+        .fullScreenCover(isPresented: .constant(!hasCompletedOnboarding)) {
+            OnboardingView()
         }
     }
 }

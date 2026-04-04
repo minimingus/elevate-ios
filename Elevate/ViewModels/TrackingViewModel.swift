@@ -28,6 +28,7 @@ final class TrackingViewModel: ObservableObject {
     private var timer: AnyCancellable?
     private var pipelineCancellables = Set<AnyCancellable>()
     private var weightKg: Double = 70.0
+    private var goalHapticFired = false
 
     init(pipeline: SensorPipeline, sessionRepo: SessionRepository,
          achievementRepo: AchievementRepository, healthKit: HealthKitService) {
@@ -46,13 +47,23 @@ final class TrackingViewModel: ObservableObject {
         startDate = Date()
         elapsedTime = 0
         summary = nil
+        goalHapticFired = false
 
         pipeline.$steps
             .receive(on: RunLoop.main)
             .sink { [weak self] s in
                 guard let self else { return }
+                let previous = self.steps
                 self.steps = s
                 self.calories = CalorieEstimator.calories(steps: s, weightKg: self.weightKg)
+                if s > previous {
+                    HapticService.step()
+                }
+                let goal = UserDefaults.standard.dailyStepGoal
+                if !self.goalHapticFired && goal > 0 && s >= goal {
+                    self.goalHapticFired = true
+                    HapticService.goalReached()
+                }
             }
             .store(in: &pipelineCancellables)
 
@@ -69,6 +80,7 @@ final class TrackingViewModel: ObservableObject {
             }
 
         pipeline.start()
+        HapticService.sessionStart()
     }
 
     func stop() async {
@@ -100,6 +112,9 @@ final class TrackingViewModel: ObservableObject {
             .compactMap { $0.unlockedDate != nil ? $0.id : nil })
         let toUnlock = candidateIds.subtracting(alreadyUnlocked)
         try? achievementRepo.unlock(ids: toUnlock)
+        if !toUnlock.isEmpty {
+            HapticService.achievementUnlocked()
+        }
 
         let newAchievements = ((try? achievementRepo.fetchAll()) ?? [])
             .filter { toUnlock.contains($0.id) }
@@ -110,6 +125,13 @@ final class TrackingViewModel: ObservableObject {
             duration: session.duration,
             newlyUnlocked: newAchievements
         )
+
+        NotificationService.shared.scheduleDaily(
+            currentStreak: streak,
+            todaySteps: finalSteps,
+            dailyGoal: UserDefaults.standard.dailyStepGoal
+        )
+        HapticService.sessionStop()
     }
 
     var dailyGoalProgress: Double {
