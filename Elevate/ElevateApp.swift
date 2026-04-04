@@ -1,32 +1,46 @@
-//
-//  ElevateApp.swift
-//  Elevate
-//
-//  Created by Tomer Abramovich on 04/04/2026.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
 struct ElevateApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    let container: ModelContainer
+    @StateObject private var trackingVM: TrackingViewModel
+    @StateObject private var historyVM: HistoryViewModel
+    @StateObject private var achievementVM: AchievementViewModel
 
+    init() {
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let c = try ModelContainer(for: ClimbSession.self, Achievement.self)
+            container = c
+            let sessionRepo = SessionRepository(modelContext: c.mainContext)
+            let achievementRepo = AchievementRepository(modelContext: c.mainContext)
+            let pipeline = SensorPipeline()
+            let healthKit = HealthKitService()
+
+            _trackingVM = StateObject(wrappedValue: TrackingViewModel(
+                pipeline: pipeline,
+                sessionRepo: sessionRepo,
+                achievementRepo: achievementRepo,
+                healthKit: healthKit
+            ))
+            _historyVM = StateObject(wrappedValue: HistoryViewModel(sessionRepo: sessionRepo))
+            _achievementVM = StateObject(wrappedValue: AchievementViewModel(
+                achievementRepo: achievementRepo,
+                sessionRepo: sessionRepo
+            ))
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Failed to create ModelContainer: \(error)")
         }
-    }()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(container)
+                .environmentObject(trackingVM)
+                .environmentObject(historyVM)
+                .environmentObject(achievementVM)
+                .preferredColorScheme(.dark)
         }
-        .modelContainer(sharedModelContainer)
     }
 }

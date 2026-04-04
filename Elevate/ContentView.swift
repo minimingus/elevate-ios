@@ -1,61 +1,47 @@
-//
-//  ContentView.swift
-//  Elevate
-//
-//  Created by Tomer Abramovich on 04/04/2026.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @EnvironmentObject private var trackingVM: TrackingViewModel
+    @EnvironmentObject private var historyVM: HistoryViewModel
+    @EnvironmentObject private var achievementVM: AchievementViewModel
+
+    @State private var showHistory = false
+    @State private var showAchievements = false
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        Group {
+            if trackingVM.isRunning {
+                ActiveSessionView(trackingVM: trackingVM) {
+                    Task { await trackingVM.stop() }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            } else {
+                IdleView(
+                    historyVM: historyVM,
+                    onStart: { Task { await trackingVM.start() } },
+                    onHistory: { showHistory = true },
+                    onAchievements: { showAchievements = true }
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: trackingVM.isRunning)
+        .sheet(isPresented: $showHistory) {
+            HistoryView(vm: historyVM)
+        }
+        .sheet(isPresented: $showAchievements) {
+            AchievementsView(vm: achievementVM)
+        }
+        .sheet(item: $trackingVM.summary) { summary in
+            SessionSummaryView(summary: summary) {
+                trackingVM.summary = nil
+                historyVM.load()
+                achievementVM.load()
+            }
+        }
+        .task {
+            let hk = HealthKitService()
+            try? await hk.requestPermission()
+        }
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
