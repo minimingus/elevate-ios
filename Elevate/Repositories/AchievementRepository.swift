@@ -26,11 +26,17 @@ final class AchievementRepository {
             modelContext.insert(Achievement(id: def.id, name: def.name,
                                             achievementDescription: def.desc))
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("AchievementRepository: failed to seed defaults: \(error)")
+        }
     }
 
     func fetchAll() throws -> [Achievement] {
-        try modelContext.fetch(FetchDescriptor<Achievement>())
+        // Sorted by id for stable display order.
+        let descriptor = FetchDescriptor<Achievement>(sortBy: [SortDescriptor(\.id)])
+        return try modelContext.fetch(descriptor)
     }
 
     func unlock(ids: Set<String>) throws {

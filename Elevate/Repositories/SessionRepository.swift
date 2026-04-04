@@ -22,24 +22,32 @@ final class SessionRepository {
     }
 
     func lifetimeSteps() throws -> Int {
-        try fetchAll().reduce(0) { $0 + $1.steps }
+        // Fetch only steps column to avoid loading all properties.
+        var descriptor = FetchDescriptor<ClimbSession>()
+        descriptor.propertiesToFetch = [\.steps]
+        return try modelContext.fetch(descriptor).reduce(0) { $0 + $1.steps }
     }
 
     func todaySteps() throws -> Int {
+        // Uses Calendar.current intentionally — local timezone matches the user's day boundary.
         let startOfDay = Calendar.current.startOfDay(for: Date())
-        let descriptor = FetchDescriptor<ClimbSession>(
+        var descriptor = FetchDescriptor<ClimbSession>(
             predicate: #Predicate { $0.startDate >= startOfDay }
         )
+        descriptor.propertiesToFetch = [\.steps]
         return try modelContext.fetch(descriptor).reduce(0) { $0 + $1.steps }
     }
 
     /// Returns step counts for the past `days` calendar days, index 0 = today, index 6 = 6 days ago.
+    /// Uses Calendar.current intentionally — local timezone matches the user's day boundary.
     func weeklySteps(days: Int = 7) throws -> [Int] {
         let calendar = Calendar.current
         return try (0..<days).map { offset in
-            let day = calendar.date(byAdding: .day, value: -offset, to: Date())!
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: Date()),
+                  let end = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: day)) else {
+                return 0
+            }
             let start = calendar.startOfDay(for: day)
-            let end = calendar.date(byAdding: .day, value: 1, to: start)!
             let descriptor = FetchDescriptor<ClimbSession>(
                 predicate: #Predicate { $0.startDate >= start && $0.startDate < end }
             )
