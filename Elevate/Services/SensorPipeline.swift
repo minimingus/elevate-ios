@@ -13,14 +13,21 @@ final class SensorPipeline: ObservableObject {
     private let pedometer = CMPedometer()
     private var stepDetector = StepDetector()
     private var lastRelativeAltitude: Double? = nil
-    private let operationQueue = OperationQueue()
+    private var lastAltimeterUpdate: Date? = nil
+    private let operationQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.maxConcurrentOperationCount = 1
+        return q
+    }()
     private var sessionStart: Date?
 
     func start() {
+        guard !motionManager.isAccelerometerActive else { return } // prevent double-start
         steps = 0
         floors = 0
         isClimbing = false
         lastRelativeAltitude = nil
+        lastAltimeterUpdate = nil
         sessionStart = Date()
         stepDetector = StepDetector()
 
@@ -49,6 +56,7 @@ final class SensorPipeline: ObservableObject {
                     self.isClimbing = altitude > last
                 }
                 self.lastRelativeAltitude = altitude
+                self.lastAltimeterUpdate = Date()
             }
         }
     }
@@ -61,7 +69,9 @@ final class SensorPipeline: ObservableObject {
             let z = data.acceleration.z
             let now = Date()
             Task { @MainActor in
-                guard self.isClimbing else { return }
+                // Treat altimeter data older than 2s as stale — user has paused.
+                let altimeterStale = self.lastAltimeterUpdate.map { Date().timeIntervalSince($0) > 2.0 } ?? true
+                guard self.isClimbing && !altimeterStale else { return }
                 if self.stepDetector.processSample(z, at: now) {
                     self.steps += 1
                 }
