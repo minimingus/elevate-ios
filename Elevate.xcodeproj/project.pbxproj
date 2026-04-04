@@ -400,6 +400,9 @@
 				DEVELOPMENT_TEAM = FDLSN3ZJFV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Elevate reads your body mass to estimate calories burned.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Elevate saves your stair climbing sessions to Apple Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Elevate uses the accelerometer and barometer to count stair steps.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +435,9 @@
 				DEVELOPMENT_TEAM = FDLSN3ZJFV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Elevate reads your body mass to estimate calories burned.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Elevate saves your stair climbing sessions to Apple Health.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Elevate uses the accelerometer and barometer to count stair steps.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
