@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftData
+import WidgetKit
 
 struct SessionSummary: Identifiable {
     let id = UUID()
@@ -44,7 +45,8 @@ final class TrackingViewModel: ObservableObject {
         timer?.cancel()
         weightKg = await healthKit.bodyMassKg() ?? 70.0
         isRunning = true
-        startDate = Date()
+        let now = Date()
+        startDate = now
         elapsedTime = 0
         summary = nil
         goalHapticFired = false
@@ -56,9 +58,7 @@ final class TrackingViewModel: ObservableObject {
                 let previous = self.steps
                 self.steps = s
                 self.calories = CalorieEstimator.calories(steps: s, weightKg: self.weightKg)
-                if s > previous {
-                    HapticService.step()
-                }
+                if s > previous { HapticService.step() }
                 let goal = UserDefaults.standard.dailyStepGoal
                 if !self.goalHapticFired && goal > 0 && s >= goal {
                     self.goalHapticFired = true
@@ -77,10 +77,18 @@ final class TrackingViewModel: ObservableObject {
             .sink { [weak self] _ in
                 guard let self, let start = self.startDate else { return }
                 self.elapsedTime = Date().timeIntervalSince(start)
+                Task {
+                    await LiveActivityService.shared.update(
+                        steps: self.steps,
+                        floors: self.floors,
+                        elapsedSeconds: Int(self.elapsedTime)
+                    )
+                }
             }
 
         pipeline.start()
         HapticService.sessionStart()
+        LiveActivityService.shared.start(at: now)
     }
 
     func stop() async {
@@ -112,9 +120,7 @@ final class TrackingViewModel: ObservableObject {
             .compactMap { $0.unlockedDate != nil ? $0.id : nil })
         let toUnlock = candidateIds.subtracting(alreadyUnlocked)
         try? achievementRepo.unlock(ids: toUnlock)
-        if !toUnlock.isEmpty {
-            HapticService.achievementUnlocked()
-        }
+        if !toUnlock.isEmpty { HapticService.achievementUnlocked() }
 
         let newAchievements = ((try? achievementRepo.fetchAll()) ?? [])
             .filter { toUnlock.contains($0.id) }
@@ -126,9 +132,22 @@ final class TrackingViewModel: ObservableObject {
             newlyUnlocked: newAchievements
         )
 
+        // Write to App Group UserDefaults for widget
+        let todaySteps = (try? sessionRepo.todaySteps()) ?? finalSteps
+        let sharedDefaults = UserDefaults(suiteName: "group.com.mingus.Elevate")
+        sharedDefaults?.set(todaySteps, forKey: "todaySteps")
+        sharedDefaults?.set(UserDefaults.standard.dailyStepGoal, forKey: "dailyStepGoal")
+        sharedDefaults?.set(streak, forKey: "currentStreak")
+        WidgetCenter.shared.reloadAllTimelines()
+
+        await LiveActivityService.shared.end(
+            steps: finalSteps, floors: finalFloors,
+            elapsedSeconds: Int(end.timeIntervalSince(start))
+        )
+
         NotificationService.shared.scheduleDaily(
             currentStreak: streak,
-            todaySteps: finalSteps,
+            todaySteps: todaySteps,
             dailyGoal: UserDefaults.standard.dailyStepGoal
         )
         HapticService.sessionStop()

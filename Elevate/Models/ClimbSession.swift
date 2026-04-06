@@ -3,7 +3,7 @@ import Foundation
 
 @Model
 final class ClimbSession {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var startDate: Date
     var endDate: Date
     var steps: Int

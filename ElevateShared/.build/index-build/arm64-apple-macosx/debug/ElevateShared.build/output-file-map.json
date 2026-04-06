@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/master.swiftdeps"
+  },
+  "/Users/tomerab/dev/elevate/Elevate/ElevateShared/Sources/ElevateShared/ElevateActivityAttributes.swift": {
+    "dependencies": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/ElevateActivityAttributes.d",
+    "object": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/ElevateActivityAttributes.swift.o",
+    "swiftmodule": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/ElevateActivityAttributes~partial.swiftmodule",
+    "swift-dependencies": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/ElevateActivityAttributes.swiftdeps",
+    "diagnostics": "/Users/tomerab/dev/elevate/Elevate/ElevateShared/.build/index-build/arm64-apple-macosx/debug/ElevateShared.build/ElevateActivityAttributes.dia"
+  }
+}

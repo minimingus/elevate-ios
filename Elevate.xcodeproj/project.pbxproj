@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B161A30C2F8111260033FCF7 /* ElevateWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B161A3002F8111240033FCF7 /* ElevateWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B161AA172F84088A0033FCF7 /* ElevateShared in Frameworks */ = {isa = PBXBuildFile; productRef = B161A30E2F8111260033FCF7 /* ElevateShared */; };
+		B161AA182F84088A0033FCF7 /* ElevateShared in Frameworks */ = {isa = PBXBuildFile; productRef = B161A30F2F8111260033FCF7 /* ElevateShared */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B161A1A02F8111260033FCF7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,34 @@
 			remoteGlobalIDString = B161A18F2F8111240033FCF7;
 			remoteInfo = Elevate;
 		};
+		B161A30A2F8111260033FCF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B161A1882F8111240033FCF7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B161A3052F8111240033FCF7;
+			remoteInfo = ElevateWidget;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B161A30B2F8111240033FCF7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B161A30C2F8111260033FCF7 /* ElevateWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B161A1902F8111240033FCF7 /* Elevate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Elevate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B161A19F2F8111260033FCF7 /* ElevateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElevateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B161A1A92F8111260033FCF7 /* ElevateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElevateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B161A3002F8111240033FCF7 /* ElevateWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ElevateWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,6 +73,11 @@
 			path = ElevateUITests;
 			sourceTree = "<group>";
 		};
+		B161A3012F8111240033FCF7 /* ElevateWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ElevateWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B161AA172F84088A0033FCF7 /* ElevateShared in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +103,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B161A3032F8111240033FCF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B161AA182F84088A0033FCF7 /* ElevateShared in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +120,7 @@
 				B161A1922F8111240033FCF7 /* Elevate */,
 				B161A1A22F8111260033FCF7 /* ElevateTests */,
 				B161A1AC2F8111260033FCF7 /* ElevateUITests */,
+				B161A3012F8111240033FCF7 /* ElevateWidget */,
 				B161A1912F8111240033FCF7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +131,7 @@
 				B161A1902F8111240033FCF7 /* Elevate.app */,
 				B161A19F2F8111260033FCF7 /* ElevateTests.xctest */,
 				B161A1A92F8111260033FCF7 /* ElevateUITests.xctest */,
+				B161A3002F8111240033FCF7 /* ElevateWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,16 +146,19 @@
 				B161A18C2F8111240033FCF7 /* Sources */,
 				B161A18D2F8111240033FCF7 /* Frameworks */,
 				B161A18E2F8111240033FCF7 /* Resources */,
+				B161A30B2F8111240033FCF7 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B161A3102F8111260033FCF7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B161A1922F8111240033FCF7 /* Elevate */,
 			);
 			name = Elevate;
 			packageProductDependencies = (
+				B161A30E2F8111260033FCF7 /* ElevateShared */,
 			);
 			productName = Elevate;
 			productReference = B161A1902F8111240033FCF7 /* Elevate.app */;
@@ -163,6 +210,29 @@
 			productReference = B161A1A92F8111260033FCF7 /* ElevateUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		B161A3052F8111240033FCF7 /* ElevateWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B161A3082F8111260033FCF7 /* Build configuration list for PBXNativeTarget "ElevateWidget" */;
+			buildPhases = (
+				B161A3022F8111240033FCF7 /* Sources */,
+				B161A3032F8111240033FCF7 /* Frameworks */,
+				B161A3042F8111240033FCF7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B161A3012F8111240033FCF7 /* ElevateWidget */,
+			);
+			name = ElevateWidget;
+			packageProductDependencies = (
+				B161A30F2F8111260033FCF7 /* ElevateShared */,
+			);
+			productName = ElevateWidget;
+			productReference = B161A3002F8111240033FCF7 /* ElevateWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +254,9 @@
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = B161A18F2F8111240033FCF7;
 					};
+					B161A3052F8111240033FCF7 = {
+						CreatedOnToolsVersion = 26.3;
+					};
 				};
 			};
 			buildConfigurationList = B161A18B2F8111240033FCF7 /* Build configuration list for PBXProject "Elevate" */;
@@ -195,6 +268,9 @@
 			);
 			mainGroup = B161A1872F8111240033FCF7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B161A30D2F8111240033FCF7 /* XCLocalSwiftPackageReference "ElevateShared" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B161A1912F8111240033FCF7 /* Products */;
 			projectDirPath = "";
@@ -203,6 +279,7 @@
 				B161A18F2F8111240033FCF7 /* Elevate */,
 				B161A19E2F8111260033FCF7 /* ElevateTests */,
 				B161A1A82F8111260033FCF7 /* ElevateUITests */,
+				B161A3052F8111240033FCF7 /* ElevateWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +300,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B161A1A72F8111260033FCF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B161A3042F8111240033FCF7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +337,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B161A3022F8111240033FCF7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +356,11 @@
 			isa = PBXTargetDependency;
 			target = B161A18F2F8111240033FCF7 /* Elevate */;
 			targetProxy = B161A1AA2F8111260033FCF7 /* PBXContainerItemProxy */;
+		};
+		B161A3102F8111260033FCF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B161A3052F8111240033FCF7 /* ElevateWidget */;
+			targetProxy = B161A30A2F8111260033FCF7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -395,6 +491,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Elevate/Elevate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FDLSN3ZJFV;
@@ -403,6 +500,8 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Elevate reads your body mass to estimate calories burned.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Elevate saves your stair climbing sessions to Apple Health.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "Elevate uses the accelerometer and barometer to count stair steps.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -430,6 +529,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Elevate/Elevate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FDLSN3ZJFV;
@@ -438,6 +538,8 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Elevate reads your body mass to estimate calories burned.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Elevate saves your stair climbing sessions to Apple Health.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "Elevate uses the accelerometer and barometer to count stair steps.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -544,6 +646,64 @@
 			};
 			name = Release;
 		};
+		B161A3062F8111260033FCF7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ElevateWidget/ElevateWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FDLSN3ZJFV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingus.Elevate.ElevateWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B161A3072F8111260033FCF7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ElevateWidget/ElevateWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FDLSN3ZJFV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingus.Elevate.ElevateWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -583,7 +743,36 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B161A3082F8111260033FCF7 /* Build configuration list for PBXNativeTarget "ElevateWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B161A3062F8111260033FCF7 /* Debug */,
+				B161A3072F8111260033FCF7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B161A30D2F8111240033FCF7 /* XCLocalSwiftPackageReference "ElevateShared" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ElevateShared;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B161A30E2F8111260033FCF7 /* ElevateShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B161A30D2F8111240033FCF7 /* XCLocalSwiftPackageReference "ElevateShared" */;
+			productName = ElevateShared;
+		};
+		B161A30F2F8111260033FCF7 /* ElevateShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B161A30D2F8111240033FCF7 /* XCLocalSwiftPackageReference "ElevateShared" */;
+			productName = ElevateShared;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B161A1882F8111240033FCF7 /* Project object */;
 }

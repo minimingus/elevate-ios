@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import WidgetKit
 
 struct PersonalBests {
     let maxSteps: Int
@@ -28,6 +29,15 @@ final class HistoryViewModel: ObservableObject {
         todaySteps = (try? sessionRepo.todaySteps()) ?? 0
         computePersonalBests()
         computeStreak()
+        syncToWidget()
+    }
+
+    private func syncToWidget() {
+        let defaults = UserDefaults(suiteName: "group.com.mingus.Elevate")
+        defaults?.set(todaySteps, forKey: "todaySteps")
+        defaults?.set(UserDefaults.standard.dailyStepGoal, forKey: "dailyStepGoal")
+        defaults?.set(currentStreak, forKey: "currentStreak")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func computePersonalBests() {

@@ -10,7 +10,12 @@ struct ElevateApp: App {
 
     init() {
         do {
-            let c = try ModelContainer(for: ClimbSession.self, Achievement.self)
+            // cloudKitDatabase: .automatic enables iCloud sync.
+            // Requires iCloud + CloudKit entitlements and the container
+            // provisioned in the Apple Developer portal.
+            let config = ModelConfiguration(cloudKitDatabase: .automatic)
+            let c = try ModelContainer(for: ClimbSession.self, Achievement.self,
+                                       configurations: config)
             container = c
             let sessionRepo = SessionRepository(modelContext: c.mainContext)
             let achievementRepo = AchievementRepository(modelContext: c.mainContext)

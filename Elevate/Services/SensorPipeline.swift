@@ -1,6 +1,7 @@
 import CoreMotion
 import Combine
 import Foundation
+import UIKit
 
 /// Counts stair steps using altitude gain from the barometer.
 /// Formula: steps = cumulative altitude gain (m) / riser height (0.175 m)
@@ -27,6 +28,7 @@ final class SensorPipeline: ObservableObject {
     private var lastAltitude: Double? = nil
     private var altitudeGainMeters: Double = 0
     private var lastClimbTime: Date = .distantPast
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
 
     func start() {
         guard sessionStart == nil else { return }
@@ -37,6 +39,11 @@ final class SensorPipeline: ObservableObject {
         altitudeGainMeters = 0
         sessionStart = Date()
 
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "ElevateClimbing") {
+            UIApplication.shared.endBackgroundTask(self.backgroundTask)
+            self.backgroundTask = .invalid
+        }
+
         startAltimeter()
         startPedometer()
     }
@@ -45,6 +52,10 @@ final class SensorPipeline: ObservableObject {
         altimeter.stopRelativeAltitudeUpdates()
         pedometer.stopUpdates()
         sessionStart = nil
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+            backgroundTask = .invalid
+        }
         return (steps, floors)
     }
 
