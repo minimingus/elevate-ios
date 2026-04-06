@@ -21,12 +21,10 @@ private let landmarks: [Landmark] = [
 
 private func landmarkComparison(for steps: Int) -> String? {
     guard steps > 0 else { return nil }
-    // Find the landmark whose steps divides most evenly into our count
     let best = landmarks
         .filter { steps >= $0.steps }
         .max(by: { $0.steps < $1.steps })
     guard let best else {
-        // Didn't reach any landmark — show fraction of closest
         if let closest = landmarks.min(by: { $0.steps < $1.steps }) {
             let pct = Int(Double(steps) / Double(closest.steps) * 100)
             return "\(pct)% of the way up \(closest.name) \(closest.emoji)"
@@ -144,86 +142,175 @@ struct SessionSummaryView: View {
     let onDone: () -> Void
 
     @State private var shareImage: Image? = nil
+    @State private var appeared = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("SESSION COMPLETE")
-                .font(.caption.bold())
-                .foregroundStyle(.secondary)
-                .tracking(2)
-                .padding(.top, 4)
+        ScrollView {
+            VStack(spacing: 0) {
 
-            // Stats grid
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                SummaryCell(value: "\(summary.steps)", label: "Steps", color: .green)
-                SummaryCell(value: "\(summary.floors)", label: "Floors", color: .blue)
-                SummaryCell(value: formatDuration(summary.duration), label: "Duration", color: .primary)
-                SummaryCell(value: "\(Int(summary.calories))", label: "Calories", color: .orange)
-            }
-
-            // Landmark comparison
-            if let landmark = landmarkComparison(for: summary.steps) {
-                HStack(spacing: 8) {
-                    Text(landmark)
-                        .font(.subheadline.bold())
+                // MARK: Header
+                VStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 44))
                         .foregroundStyle(.green)
-                        .multilineTextAlignment(.center)
+                        .scaleEffect(appeared ? 1.0 : 0.5)
+                        .opacity(appeared ? 1.0 : 0.0)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.1), value: appeared)
+                    Text("Session Complete")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                    Text(Date.now.formatted(date: .abbreviated, time: .shortened))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(Color.green.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
+                .padding(.vertical, 28)
 
-            // Achievements
-            if !summary.newlyUnlocked.isEmpty {
-                VStack(spacing: 8) {
-                    ForEach(summary.newlyUnlocked, id: \.id) { achievement in
-                        HStack {
-                            Image(systemName: "trophy.fill").foregroundStyle(.yellow)
-                            Text(achievement.name).font(.subheadline.bold())
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.yellow.opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
+                // MARK: Stats grid
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    spacing: 12
+                ) {
+                    SummaryStatCell(
+                        value: "\(summary.steps)",
+                        label: "Steps",
+                        icon: "figure.stair.stepper",
+                        color: .green
+                    )
+                    SummaryStatCell(
+                        value: "\(summary.floors)",
+                        label: "Floors",
+                        icon: "building.2.fill",
+                        color: .blue
+                    )
+                    SummaryStatCell(
+                        value: formatDuration(summary.duration),
+                        label: "Duration",
+                        icon: "clock.fill",
+                        color: .purple
+                    )
+                    SummaryStatCell(
+                        value: "\(Int(summary.calories))",
+                        label: "Calories",
+                        icon: "flame.fill",
+                        color: .orange
+                    )
                 }
-            }
+                .padding(.horizontal, 20)
 
-            HStack(spacing: 4) {
-                Image(systemName: "heart.fill").foregroundStyle(.pink).font(.caption)
-                Text("Saved to Apple Health").font(.caption).foregroundStyle(.secondary)
-            }
+                // MARK: Landmark comparison
+                if let landmark = landmarkComparison(for: summary.steps) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "mountain.2.fill")
+                            .foregroundStyle(.green)
+                        Text(landmark)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.green)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 20)
+                    .background(Color.green.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.green.opacity(0.2), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                }
 
-            Spacer()
+                // MARK: New achievements
+                if !summary.newlyUnlocked.isEmpty {
+                    VStack(spacing: 10) {
+                        Text("NEW ACHIEVEMENTS")
+                            .font(.caption.bold())
+                            .foregroundStyle(.secondary)
+                            .tracking(1.5)
 
-            // Share + Done
-            HStack(spacing: 12) {
-                if let shareImage {
-                    ShareLink(item: shareImage, preview: SharePreview("My Elevate session", image: shareImage)) {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        ForEach(summary.newlyUnlocked, id: \.id) { achievement in
+                            HStack(spacing: 12) {
+                                Image(systemName: "trophy.fill")
+                                    .foregroundStyle(.yellow)
+                                    .font(.title3)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(achievement.name)
+                                        .font(.subheadline.bold())
+                                    Text(achievement.achievementDescription)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Text("NEW")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.yellow)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Color.yellow.opacity(0.15))
+                                    .clipShape(Capsule())
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Color.yellow.opacity(0.08))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.yellow.opacity(0.2), lineWidth: 1)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                }
+
+                // MARK: Health sync indicator
+                HStack(spacing: 6) {
+                    Image(systemName: "heart.fill")
+                        .foregroundStyle(.pink)
+                        .font(.caption)
+                    Text("Saved to Apple Health")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.top, 20)
+
+                Spacer().frame(height: 32)
+
+                // MARK: Share + Done
+                VStack(spacing: 12) {
+                    if let shareImage {
+                        ShareLink(
+                            item: shareImage,
+                            preview: SharePreview("My Elevate session", image: shareImage)
+                        ) {
+                            Label("Share Session", systemImage: "square.and.arrow.up")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(.secondarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                        }
+                        .padding(.horizontal, 20)
+                    }
+
+                    Button(action: onDone) {
+                        Text("Done")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
+                            .padding(.vertical, 16)
+                            .background(Color.green)
+                            .foregroundStyle(.black)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
+                    .padding(.horizontal, 20)
                 }
-
-                Button(action: onDone) {
-                    Text("Done")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundStyle(.black)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                }
+                .padding(.bottom, 32)
             }
         }
-        .padding()
-        .task { await renderShareCard() }
+        .task {
+            appeared = true
+            await renderShareCard()
+        }
     }
 
     private func formatDuration(_ t: TimeInterval) -> String {
@@ -242,23 +329,36 @@ struct SessionSummaryView: View {
     }
 }
 
-private struct SummaryCell: View {
+private struct SummaryStatCell: View {
     let value: String
     let label: String
+    let icon: String
     let color: Color
 
     var body: some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(color)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        VStack(spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.caption.bold())
+                    .foregroundStyle(color)
+                Spacer()
+            }
+            HStack(alignment: .lastTextBaseline, spacing: 0) {
+                Text(value)
+                    .font(.system(size: 30, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.primary)
+                Spacer()
+            }
+            HStack {
+                Text(label)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding()
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
         .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
