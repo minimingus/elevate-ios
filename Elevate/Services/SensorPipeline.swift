@@ -14,7 +14,6 @@ final class SensorPipeline: ObservableObject {
     // Tuning constants
     private let riserHeightMeters: Double = 0.175   // standard stair riser
     private let floorHeightMeters: Double = 3.0     // ~10 ft per floor
-    private let minDeltaMeters:    Double = 0.04    // ignore jitter < 4 cm
 
     private let altimeter = CMAltimeter()
     private let pedometer = CMPedometer()
@@ -68,8 +67,9 @@ final class SensorPipeline: ObservableObject {
 
         let delta = altitude - last
 
-        if delta > minDeltaMeters {
-            // Upward movement — accumulate gain
+        if delta > 0 {
+            // Accumulate every positive delta — barometer noise floor is < 1 cm
+            // so no threshold needed; thresholding causes lost altitude and lag
             altitudeGainMeters += delta
             let newSteps = Int(altitudeGainMeters / riserHeightMeters)
             if newSteps > steps {
@@ -79,7 +79,6 @@ final class SensorPipeline: ObservableObject {
             isClimbing = true
             lastClimbTime = Date()
         } else if Date().timeIntervalSince(lastClimbTime) > 2.0 {
-            // No meaningful upward movement for 2s — not climbing
             isClimbing = false
         }
     }
